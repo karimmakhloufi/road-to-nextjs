@@ -1,0 +1,11 @@
+services:
+  back:
+    build: ./back
+    volumes:
+      - ./back/src:/app/src
+  front:
+    build: ./front
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front:/app
