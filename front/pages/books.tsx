@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { gql } from "@apollo/client";
 import client from "../graphql/apollo-client";
 
@@ -7,6 +8,7 @@ interface BooksI {
 }
 
 const BooksComponent = ({ data: { books } }: { data: { books: BooksI[] } }) => {
+  const inputEl = useRef<HTMLInputElement>(null);
   return (
     <div>
       <p>This will be the page</p>
@@ -15,6 +17,26 @@ const BooksComponent = ({ data: { books } }: { data: { books: BooksI[] } }) => {
           <li key={index}>{book.author}</li>
         ))}
       </ul>
+      <input ref={inputEl} type="text" />
+      <button
+        onClick={async () => {
+          console.log(inputEl.current?.value);
+          try {
+            await client.mutate({
+              mutation: gql`
+                mutation ($author: String) {
+                  addBook(author: $author)
+                }
+              `,
+              variables: { author: inputEl.current?.value },
+            });
+          } catch (e) {
+            console.log("error", e);
+          }
+        }}
+      >
+        Add Book
+      </button>
     </div>
   );
 };
